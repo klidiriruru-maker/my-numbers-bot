@@ -24,12 +24,12 @@ from telegram import (
 )
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters, CallbackQueryHandler
 
-# ==================== FLASK SERVER FOR RENDER ====================
+# ==================== FLASK SERVER (FOR RENDER) ====================
 flask_app = Flask(__name__)
 
 @flask_app.route('/')
 def home():
-    return "Bot is running healthy on Render!"
+    return "Bot is running online 24/7!"
 
 def run_flask():
     port = int(os.environ.get("PORT", 8080))
@@ -42,6 +42,7 @@ CONFIG_ZENEX_BASE_URL = "https://api.zenexnetwork.com"
 CONFIG_ADMIN_ID = 8991828975
 CONFIG_OTP_GROUP_ID = -1003964512828
 
+# Premium copy button (PTB 21+)
 try:
     from telegram import CopyTextButton
     HAS_COPY_BTN = True
@@ -140,7 +141,7 @@ PREMIUM_FLAGS = {
     "\U0001f1f6\U0001f1e6": "5911260864983339619", "\U0001f1f5\U0001f1f9": "5911023653939581472",
     "\U0001f1f5\U0001f1ed": "5911268638874145162", "\U0001f1f5\U0001f1ea": "5911207993935925780",
     "\U0001f1f5\U0001f1f0": "5913705895375672082", "\U0001f1f4\U0001f1f2": "5913570801474343473",
-    "\U0001f1f3\U0001f1f4": "5913617397574537046", "\U0001f1f3\U0001f1ec": "5911143844304393105",
+    "\U0001f1f3\U0001f1f4": "591361797574537046", "\U0001f1f3\U0001f1ec": "5911143844304393105",
     "\U0001f1f3\U0001f1ff": "5913640044937089340", "\U0001f1f3\U0001f1f1": "5913367645226275100",
     "\U0001f1f3\U0001f1f5": "5913496520014958723", "\U0001f1f2\U0001f1e6": "5911482111633658301",
     "\U0001f1f2\U0001f1f3": "5911041383564580038", "\U0001f1f2\U0001f1e9": "5913456847402045950",
@@ -194,11 +195,11 @@ def load_settings():
         "support_username": "@support",
         "maintenance_mode": False,
         "cooldown_time": 1.0,
-        "min_withdraw": 50.0,
+        "min_withdraw": 25.0,
         "otp_bonus": 0.20,
         "referral_bonus": 0.0,
-        "admins": [ADMIN_ID],
-        "owners": [ADMIN_ID],
+        "admins": [8991828975],
+        "owners": [8991828975],
         "otp_group_chat_id": None,
         "force_join_channel": None,
         "manual_services": [],
@@ -251,13 +252,13 @@ def get_api_urls(base_url):
 def get_api_headers(api_key):
     return {"mapikey": api_key}
 
-WELCOME_MESSAGE = """✨ 𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 TEST BOT🚀 ✨ 
+WELCOME_MESSAGE = """✨ 𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 SPIDER BOT🚀 ✨ 
 ━━━━━━━━━━━━━━━━━━━━━━
 🚀 Enjoy Premium Quality Service 🚀"""
 
 OTP_RATE = 0.20
 REFERRAL_PRICE = 0
-MIN_WITHDRAW = 50
+MIN_WITHDRAW = 25
 MAX_WITHDRAW = 10000
 
 SUPPORT_LINK = "https://t.me/DEM_Support_Chat"
@@ -2215,7 +2216,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await show_pending_withdrawals(update, context)
         return
 
-    if text == "SET MINIMUM WITHDRAW" and context.user_data.get("withdrawal_admin_mode") == "main" and is_admin(uid):
+    if text == "SET MINIMUM WITHDRAW" and context.user_data.get("withdrawal_admin_mode") == "set_minimum" and is_admin(uid):
         context.user_data["withdrawal_admin_mode"] = "set_minimum"
         await update.message.reply_text(f"📉 <b>SET MINIMUM WITHDRAW</b>\n\nCurrent amount: <code>{get_min_withdraw():.2f} BDT</code>\n\nনতুন minimum amount BDT-তে লিখে পাঠান:", parse_mode="HTML", reply_markup=cancel_keyboard())
         return
@@ -3032,7 +3033,7 @@ def main():
     if not BOT_TOKEN or BOT_TOKEN == "PASTE_NEW_TELEGRAM_BOT_TOKEN_HERE":
         raise RuntimeError("BOT_TOKEN is not configured.")
 
-    # Start Flask Web Server in a separate daemon thread
+    # Flask ব্যাকগ্রাউন্ড থ্রেডে শুরু হবে Render পোর্ট বাইন্ড করার জন্য
     flask_thread = threading.Thread(target=run_flask, daemon=True)
     flask_thread.start()
 
@@ -3060,5 +3061,6 @@ def main():
     app.run_polling(allowed_updates=Update.ALL_TYPES, drop_pending_updates=True)
 
 if __name__ == "__main__":
+    import asyncio
     asyncio.set_event_loop(asyncio.new_event_loop())
     main()
